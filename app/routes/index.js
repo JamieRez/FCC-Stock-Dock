@@ -1,16 +1,11 @@
 'use strict';
-
 var path = process.cwd();
-var express = require('express');
-var app = express();
 
-app.set('port', (process.env.PORT || 8080));
+module.exports = {init};
+function init(app,passport){
 
-	app.route('/').get(function (req, res) {
-		res.sendFile(path + '/public/index.html');
-	});
-		
+	app.route('/').get(function(req,res){
+		res.render(path + '/views/index.jade');
+	})
 
-	app.listen(app.get('port'), function(req,res){
-    	console.log("Listening on port " + app.get('port'));
-	});
+}
