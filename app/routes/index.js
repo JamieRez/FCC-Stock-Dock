@@ -2,10 +2,10 @@
 var path = process.cwd();
 
 module.exports = {init};
-function init(app,passport){
+function init(app){
 
 	app.route('/').get(function(req,res){
-		res.render(path + '/views/index.jade');
+		res.render(path + '/views/index.pug');
 	})
 
 }

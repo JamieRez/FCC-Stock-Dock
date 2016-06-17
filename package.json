@@ -1,0 +1,34 @@
+{
+  "name": "stock-dock-fcc",
+  "version": "1.0.0",
+  "description": "A fullstack app that graphs the stock market",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamieRez/FCC-Stock-Dock.git"
+  },
+  "keywords": [
+    "freecodecamp",
+    "fcc",
+    "stock"
+  ],
+  "author": "Jamie Rezendes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamieRez/FCC-Stock-Dock/issues"
+  },
+  "homepage": "https://github.com/JamieRez/FCC-Stock-Dock#readme",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.13.0",
+    "mongoose": "^4.5.0",
+    "morgan": "^1.7.0",
+    "pug": "^2.0.0-beta3"
+  }
+}
