@@ -10,11 +10,11 @@ var session      = require('express-session');
 var configDB = require('./config/database.js');
 var pug = require('pug');
 
-/*
+
 mongoose.connect(configDB.url, function(){
     console.log('database connected');
 });
-*/
+
 
 app.use(bodyParser());
 app.use(morgan('dev')); // log every request to the console
