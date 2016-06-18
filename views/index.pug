@@ -2,5 +2,15 @@ doctype html
 html
   head
     title Stock Dock
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js")
+    link(rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+    script(src='/main.js')
+    link(rel='stylesheet' type="text/css" href='/main.css')
+
   body
-    h1 Stock Market
+    h1.text-center Stock Dock
+
+    .canvasObj
+      canvas#myChart
