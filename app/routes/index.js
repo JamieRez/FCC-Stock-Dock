@@ -65,11 +65,17 @@ function init(app , io){
 
 	app.post('/getStocks', function(req,res){
 		var dataArr = [];
+		var errCount =0;
 			req.body.stockArr.forEach(function(symbol){
 				quandljs.getDataFromSymbol(symbol , function(data){
-					dataArr.push(JSON.parse(data));
-					if(dataArr.length == req.body.stockArr.length){
-						res.send(dataArr);
+					data = JSON.parse(data);
+					if(!data.quandl_error){
+						dataArr.push(data);
+						if(dataArr.length == req.body.stockArr.length - errCount){
+							res.send(dataArr);
+						}
+					}else{
+						errCount++;
 					}
 				});
 			});
