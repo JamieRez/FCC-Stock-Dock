@@ -1,1 +1,1 @@
-My personal preference of starting a project
+See the live application at https://stock-dock-fcc.herokuapp.com/
