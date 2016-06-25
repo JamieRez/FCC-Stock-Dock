@@ -17,40 +17,84 @@ function init(app , io){
 		});
 	});
 
-	app.post('/getStocks', function(req,res){
 
-			Stock.findOne({name : 'myOnlyStock'} , function(err, myStock){
-				if(err) throw err;
-				if(req.body.stockSymbols != undefined){
-				req.body.stockSymbols.forEach(function(stockSymbol){
-					console.log(myStock);
-					myStock.symbols.push(stockSymbol);
-					myStock.save();
+	app.post('/setStock' , function(req,res){
+
+		if(req.body.stockSymbol == null){
+			seeStocks();
+		}else{
+
+		Stock.findOne({symbol : req.body.stockSymbol.toUpperCase()} , function(err,stock){
+			if(!stock){
+				var newStock = new Stock({symbol : req.body.stockSymbol.toUpperCase()});
+				newStock.save(function(err){
+					if(err)throw err;
+					Stock.find({symbol : req.body.stockSymbol.toUpperCase()} , function(err,stocks){
+						if(stocks.length > 1){
+							for(var i=1;i<stocks.length;i++){
+								stocks[i].remove(function(){
+									if(i==stocks.length){
+										seeStocks();
+									}
+								});
+							}
+						}else{
+							seeStocks();
+						}
+					});
 				});
+			}else{
+				seeStocks();
 			}
+		});
+	}
 
+		function seeStocks(){
+		var stockSymbolArr = [];
+		Stock.find({} , function(err,stocks){
+			if(err) throw err;
+			stocks.forEach(function(stock){
+				stockSymbolArr.push(stock.symbol);
+				if(stockSymbolArr.length == stocks.length){
+					res.send(stockSymbolArr);
+				}
+			});
+		});
+	}
+	});
 
+	app.post('/getStocks', function(req,res){
 		var dataArr = [];
-			if(myStock != undefined){
-			myStock.symbols.forEach(function(symbol){
+			req.body.stockArr.forEach(function(symbol){
 				quandljs.getDataFromSymbol(symbol , function(data){
 					dataArr.push(JSON.parse(data));
-					if(dataArr.length == req.body.stockSymbols.length){
+					if(dataArr.length == req.body.stockArr.length){
 						res.send(dataArr);
 					}
 				});
 			});
-		}
 		});
 
+		app.get('/delete' , function(req,res){
+			Stock.find({} , function(err, stocks){
+				stocks.forEach(function(stock){
+					stock.remove();
+				});
+			});
 		});
 
 
 		io.on('connection', function(socket){
 				socket.on('new stock', function(stock){
-					console.log('Adding Stock: ' + stock);
 					io.emit('new stock', stock);
 			});
+				socket.on('remove stock', function(stock){
+					Stock.findOne({symbol : stock}, function(err, stockObj){
+						stockObj.remove(function(){
+							io.emit('remove stock', stock);
+						});
+					});
+				});
 		});
 
 	}

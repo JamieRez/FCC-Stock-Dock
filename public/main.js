@@ -1,6 +1,5 @@
 $(document).ready(function(){
 
-  var stockSymbolArr = [];
 
   var socket = io();
   $('form').submit(function(){
@@ -8,17 +7,40 @@ $(document).ready(function(){
     $('input').val('');
     return false;
   });
-  socket.on('new stock', function(stock){
-    stockSymbolArr.push(stock);
+
+  socket.on('new stock', function(stockSymbol){
+    $.post('/setStock' , {stockSymbol : stockSymbol} , function(stockSymbolArr){
+      updateStocks(stockSymbolArr);
+    });
+  });
+
+  $('#origStock').click(function(){
+    socket.emit('remove stock' , $(this).text());
+    $(this).remove();
+  });
+
+  socket.on('remove stock', function(stockSymbol){
+    $.post('/setStock' , function(stockSymbolArr){
+      updateStocks(stockSymbolArr);
+    });
+  });
+
+
+
+  //On Website Launch
+  $.post('/setStock' ,function(stockSymbolArr){
     updateStocks(stockSymbolArr);
   });
 
-  updateStocks(stockSymbolArr);
 
   function updateStocks(stockArr){
-
     //Give server the stock symbols and retrieve the data
-   $.post("/getStocks", {stockSymbols : stockArr} , function(StockData){
+   $.post("/getStocks", {stockArr : stockArr} , function(StockData){
+     $('.stock').remove();
+     StockData.forEach(function(Stock){
+       $('#origStock').clone(true).appendTo('.myStockList').css('display' , 'inline-block').text(Stock.dataset.dataset_code).addClass('stock');
+     });
+
      var dataArr =[];
      //Set up dataArr
      StockData.forEach(function(Stock){
