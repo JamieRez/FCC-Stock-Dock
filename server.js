@@ -1,6 +1,7 @@
 var path = process.cwd();
 var express = require('express');
 var app = express();
+var server = require('http').Server(app);
 var bodyParser = require('body-parser');
 var port = process.env.PORT || 3000;
 var morgan       = require('morgan');
@@ -9,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 var configDB = require('./config/database.js');
 var pug = require('pug');
+var io = require('socket.io')(server);
 
 
 mongoose.connect(configDB.url, function(){
@@ -25,8 +27,8 @@ app.use(express.static('./public'));
 app.use(express.static('./views'));
 
 var routes = require('./app/routes/index.js');
-routes.init(app);
+routes.init(app , io);
 
-app.listen(port, function(req,res){
+server.listen(port, function(req,res){
     console.log("Listening on port " + port);
 });

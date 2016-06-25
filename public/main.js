@@ -1,40 +1,52 @@
 $(document).ready(function(){
-  console.log('test');
-  var ctx = $("#myChart");
 
-  var data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-        {
-            label: "My First dataset",
-            fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [65, 59, 80, 81, 56, 55, 40],
-        }
-    ]
-  };
+  var stockSymbolArr = [];
 
-  var options;
-
-  var myLineChart = new Chart(ctx, {
-    type: 'line',
-    data: data,
-    options: options
+  var socket = io();
+  $('form').submit(function(){
+    socket.emit('new stock', $('input').val());
+    $('input').val('');
+    return false;
   });
+  socket.on('new stock', function(stock){
+    stockSymbolArr.push(stock);
+    updateStocks(stockSymbolArr);
+  });
+
+  updateStocks(stockSymbolArr);
+
+  function updateStocks(stockArr){
+
+    //Give server the stock symbols and retrieve the data
+   $.post("/getStocks", {stockSymbols : stockArr} , function(StockData){
+     var dataArr =[];
+     //Set up dataArr
+     StockData.forEach(function(Stock){
+       var dataPointsArr = [];
+       Stock.dataset.data.forEach(function(priceAtTime){
+         dataPointsArr.push({ x : new Date(priceAtTime[0]) , y: priceAtTime[1]});
+       });
+       dataArr.push({showInLegend : true,
+                     legendText : Stock.dataset.dataset_code ,
+                     type: "line",
+                     dataPoints: dataPointsArr});
+     });
+
+     //Create the Chart
+     var chart = new CanvasJS.Chart("chartContainer",
+       {
+        axisX: {
+          interval:20,
+          intervalType: "day"
+      },
+        axisY:{
+          prefix : '$'
+      },
+        data: dataArr
+      });
+       chart.render();
+      });
+    }
+    //end of updateStocks
 
 });

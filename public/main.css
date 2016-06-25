@@ -1,9 +1,15 @@
-.canvasObj{
-  width : 1250px;
+#chartContainer{
+  width : 75%;
   margin-left : auto;
   margin-right : auto;
 }
 
 h1{
   color : blue;
+}
+
+form{
+  margin-top : 425px;
+  width : 10%;
+  margin-left : 275px;
 }
